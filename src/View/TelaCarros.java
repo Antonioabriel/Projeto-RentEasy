@@ -1,15 +1,36 @@
-package home;
+package View;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
-public class SistemaService1 {
+import Controller.CarroService;
+import Controller.ReservaService;
+import Model.Carro;
+import Model.Cliente;
+import Model.Reserva;
+
+public class TelaCarros {
 		
 	    public void processoReserva(Scanner scanner, Cliente cliente, CarroService carroService,ReservaService sistemaReservas) {
 	    	
 	    	System.out.println(cliente);
 	        while (true) {
-	            int numeroCarros = carroService.listarCarros();
+	        	int contador = 0;
+	        	ArrayList<Carro> ListaTemp = carroService.getListaCarros();
+	            if (ListaTemp.isEmpty()) {
+	                System.out.println("⚠ Nenhum carro disponível no momento.");
+	                
+	            } else {
+	                System.out.println("\n--- Lista de Carros Disponíveis ---");
+	                for (Carro carro : ListaTemp) {
+	                	contador++;
+	                    System.out.println(carro);
+	                }
+	            }
+	        	
+	            int numeroCarros = contador;
 	            int idEscolhido = 0;
 	            do {
 	            	try {
@@ -35,14 +56,11 @@ public class SistemaService1 {
 	            for (Carro carro : carroService.getListaCarros()) {
 	                if (carro.getId() == idEscolhido) {
 	                    carroSelecionado = carro;
-	                    break;
+	                    
 	                }
 	            }
 
-	            if (carroSelecionado == null) {
-	                System.out.println("❌ Numero inválido. Tente novamente.\n");
-	                continue;
-	            }
+	            
 
 	            System.out.println("\nVocê selecionou: " + carroSelecionado.getModelo());
 	            System.out.print("Deseja realizar a reserva? (S/N): ");
@@ -50,10 +68,20 @@ public class SistemaService1 {
 
 	            if (resposta.equalsIgnoreCase("S")) {
 	                System.out.println("✅ Reserva realizada com sucesso para o carro ID " + carroSelecionado.getId());
-	                Reserva novaReserva = new Reserva(cliente, carroSelecionado, new Date());
+	                
 	               
-					sistemaReservas.adicionarReserva(novaReserva);
-					sistemaReservas.mostrarReservasDoCliente(cliente);
+					sistemaReservas.adicionarReserva(cliente, carroSelecionado);
+					
+					List<Reserva> reservas = sistemaReservas.buscarReservasDoCliente(cliente);
+			        if (reservas.isEmpty()) {
+			            System.out.println("📭 Você ainda não fez nenhuma reserva.");
+			        } else {
+			            System.out.println("📋 Suas reservas:");
+			            for (Reserva r : reservas) {
+			                System.out.println(r);
+			            }
+			        }
+					
 	               
 	                break;
 	            } else {

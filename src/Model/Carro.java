@@ -1,7 +1,7 @@
-package home;
+package Model;
 
 public class Carro {
-	 private static int contador = 1;
+	 private static int contador = 0;
 	 private int id;
     private String idCategoria; // Ex: compacto, SUV, luxo...
     private String marca;
@@ -84,4 +84,3 @@ public class Carro {
                 " Valor Diário R$ " + valorDiario;
     }
 }
-

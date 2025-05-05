@@ -1,4 +1,4 @@
-package home;
+package Model;
 
 public class Administrador {
 	private String nome;
