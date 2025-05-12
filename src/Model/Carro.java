@@ -7,7 +7,7 @@ public class Carro {
     private String marca;
     private String modelo;
     private int capacidadePassageiros;
-    private double valorDiario;
+    private int valorDiario;
 
     public Carro(String idCategoria, String marca, String modelo, int capacidadePassageiros, int valorDiario) {
     	this.id = contador++;
@@ -70,7 +70,7 @@ public class Carro {
 		this.capacidadePassageiros = capacidadePassageiros;
 	}
 
-	public void setValorDiario(double valorDiario) {
+	public void setValorDiario(int valorDiario) {
 		this.valorDiario = valorDiario;
 	}
 

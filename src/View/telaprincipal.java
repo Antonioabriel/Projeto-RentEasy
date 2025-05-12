@@ -5,11 +5,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
+import Controller.AdministradorService;
 import Controller.CarroService;
 import Controller.ClienteService;
 import Controller.ReservaService;
 import Model.Administrador;
 import Model.Cliente;
+import Strategy.LoginAdministradorStrategy;
+import Strategy.LoginClienteStrategy;
+import Strategy.Interface.LoginStrategy;
 
 
 public class telaprincipal {
@@ -18,12 +22,14 @@ public class telaprincipal {
 		TelaCarros reserva = new TelaCarros();
 		Scanner scanner = new Scanner(System.in);
         ClienteService clienteService = new ClienteService();
+        AdministradorService adm = new AdministradorService();
         CarroService carroService = new CarroService();
         ReservaService sistemaReservas = new ReservaService();
         telaAdministrador telaAdm = new telaAdministrador(carroService,sistemaReservas,clienteService);
-        boolean iscleinte = false;
+        boolean isclinte = false;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Administrador adm = new Administrador("adm","adm");
+        LoginStrategy loginStrategy;
+        AdministradorService administradorService = new AdministradorService();
         String escolha;
         Cliente clienteLogado = null;
         String resposta = "S";
@@ -98,10 +104,10 @@ while (true) {
                     clienteLogado = clienteService.cadastrarCliente(scanner,nome, email, senha, telefone, cpf,
                             logradouro, cep, municipio, numeroCasa,
                             estado, cnhNumero, cnhCategoria, cnhValidade, dataNascimento);
-                    iscleinte = true;
+                    isclinte = true;
                     
             	} catch (Exception e) {
-                    System.out.println("Algo deu errado");
+                    System.out.println(e.getMessage());
                 }
 
                 escolha = "SAIR";
@@ -118,77 +124,60 @@ while (true) {
 
             	switch (escolha) {
             	
-					case "CLIENTE" : 
-						 while (true) {
-				    	        System.out.print("Digite o CPF (ou 'SAIR' para voltar): ");
-				    	        String cpf = scanner.nextLine();
-				    	        if (cpf.equalsIgnoreCase("SAIR")) {
-				    	            System.out.println("🔙 Saindo do login...");
-				    	            break;
-				    	        }
 
-				    	        System.out.print("Digite a senha: ");
-				    	        String senha = scanner.nextLine();
+                case "CLIENTE":
+                    loginStrategy = new LoginClienteStrategy(clienteService);
+                    isclinte = true;
+                    break;
 
-				    	        clienteLogado = clienteService.loginClientes(scanner,cpf,senha);
-				    	        if(clienteLogado == null) {
-				    	        	System.out.println("❌ CPF ou senha inválidos. Tente novamente.\n");
-				    	        	
-				    	        }else {
-				    	        	System.out.println("✅ Login bem-sucedido! Bem-vindo, " + clienteLogado.getNome() + "!");
-				    	        	iscleinte = true;
-				    	        	break;
-				    	        	
-								}
-				    	        
-				    	    }
-						
-	                    escolha = "SAIR";
-	                    
-	                    break;	
-	                
-					case "ADMINISTRADOR":
-						iscleinte = false;
-						while (true) {
-							
-			    	        System.out.print("Digite o Nome (ou 'SAIR' para voltar): ");
-			    	        String cpf = scanner.nextLine();
-			    	        if (cpf.equalsIgnoreCase("SAIR")) {
-			    	            System.out.println("🔙 Saindo do login...");
-			    	            escolha = "VOLTAR";
-			    	            break;
-			    	        }
-			    	        
-			    	        System.out.print("Digite a senha: ");
-			    	        String senha = scanner.nextLine();
+                case "ADMINISTRADOR":
+                    loginStrategy = new LoginAdministradorStrategy(administradorService);
+                    isclinte = false;
+                    break;
+                case "VOLTAR":
+                    continue;
 
-			    	        
-			    	            if (adm.getNome().equals(cpf) && adm.getSenha().equals(senha)) {
-			    	                System.out.println("✅ Login bem-sucedido! Bem-vindo, " + adm.getNome() + "!");  
-			    	                escolha = "SAIR";
-			    	                break;
-			    	            }else {
-			    	            	System.out.println("❌ CPF ou senha inválidos. Tente novamente.\n");
-			    	            	escolha = "VOLTAR";
-								}
+                default:
+                    System.out.println("❌ Opção inválida.");
+                    continue; 
+            }
 
-			    	    }
-						break;
+            System.out.print("Digite o CPF (ou 'SAIR' para voltar): ");
+            String cpf = scanner.nextLine();
+            if (cpf.equalsIgnoreCase("SAIR")) {
+                System.out.println("🔙 Saindo do login...");
+                escolha = "VOLTAR";
+                continue; 
+            }
+
+            System.out.print("Senha: ");
+            String senha = scanner.nextLine();
+
+            if (loginStrategy.autenticar(cpf, senha)) {
+                
+                
+				if (isclinte) {
+                    clienteLogado = clienteService.buscarClientePorCPF(cpf);
+                    System.out.println("✅ Login bem-sucedido!" + clienteLogado.getNome());
+                }else {
+                	System.out.println("✅ Login bem-sucedido! ADM");
 				}
-            	break;
-            case "VOLTAR":
-                System.out.println("Voltando...");
-                escolha = "voltar";
-                break;
+                
+            } else {
+                System.out.println("❌ Login falhou. Usuário ou senha inválidos.");
+                continue; 
+            }
+            escolha = "SAIR";
+            break;
             default:
                 System.out.println("❌ Opção inválida! Tente novamente.");
+                continue;
         }
-        
     } while (!escolha.equals("SAIR")); 
     
     
     do {
-        if (iscleinte) {
+        if (isclinte) {
         	do {
 				reserva.processoReserva(scanner, clienteLogado, carroService,sistemaReservas);
 				System.out.print("---- Deseja realizar outra reserva? (S/N): ");
@@ -201,19 +190,6 @@ while (true) {
 		}
     } while (!escolha.equals("SAIR")); 
     
-}
-        
-        
-		
-        
-        
-        
-        
-
-		
-		
-
+    }
 	}
-
 }
-

@@ -8,21 +8,9 @@ public class Administrador {
 	public Administrador(String nome, String senha) {
 		this.nome = nome;
 		this.senha = senha;
-		
 	}
 
-	
 
-	public void cadastrarCarro() {
-		
-	}
-	public void gerenciarDevolucao() {
-		
-	}
-	
-	public void registroRetirada() {
-		
-	}
 
 	public String getNome() {
 		return nome;

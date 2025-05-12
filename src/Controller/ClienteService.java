@@ -4,21 +4,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import Controller.Interfaces.IClienteService;
 import Model.Cliente;
+import Model.Factory.ClienteFactory;
+import Model.Factory.Interfaces.IClienteFactory;
 
-public class ClienteService{
+public class ClienteService implements IClienteService{
     private ArrayList<Cliente> listaClientes = new ArrayList<>();
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    
+    private IClienteFactory clienteFactory = new ClienteFactory();
+
     
    
-
+    @Override
     public Cliente cadastrarCliente(Scanner scanner,String nome,String email,String senha,String telefone,String cpf,
     		String logradouro,String cep,String municipio,String numeroCasa,
     		String estado,String cnhNumero,String cnhCategoria,Date cnhValidade,Date dataNascimento) {
         
 
-            Cliente cliente = new Cliente(nome, email, senha, telefone, cpf,
+            Cliente cliente = clienteFactory.criarCliente(nome, email, senha, telefone, cpf,
                     logradouro, cep, municipio, numeroCasa,
                     estado, cnhNumero, cnhCategoria, cnhValidade, dataNascimento);
 
@@ -27,8 +31,8 @@ public class ClienteService{
 
         
     }
-
-    public Cliente loginClientes(Scanner scanner,String cpf,String senha) {
+    @Override
+    public Cliente loginClientes(String cpf,String senha) {
     	try {
 
     		 Date dataNascimento = sdf.parse("1995-06-15");
@@ -64,6 +68,15 @@ public class ClienteService{
 
 		return null;
     }
+    
+    public Cliente buscarClientePorCPF(String cpf) {
+        return listaClientes.stream()
+            .filter(cliente -> cliente.getCpf().equals(cpf))
+            .findFirst()
+            .orElse(null);
+    }
+    
+    @Override
     public Cliente getClientes(String nome) {
     		for (Cliente cliente : listaClientes) {
 	            if (cliente.getNome().equals(nome)) {
@@ -78,5 +91,6 @@ public class ClienteService{
 	public String toString() {
 		return "ClienteService [listaClientes=" + listaClientes + "]";
 	}
+	
     
 }
