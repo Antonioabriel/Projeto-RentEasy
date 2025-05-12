@@ -24,7 +24,7 @@ public class telaprincipal {
         ClienteService clienteService = new ClienteService();
         AdministradorService adm = new AdministradorService();
         CarroService carroService = new CarroService();
-        ReservaService sistemaReservas = new ReservaService();
+        ReservaService sistemaReservas = ReservaService.getInstancia();
         telaAdministrador telaAdm = new telaAdministrador(carroService,sistemaReservas,clienteService);
         boolean isclinte = false;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

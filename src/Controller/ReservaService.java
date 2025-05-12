@@ -13,6 +13,21 @@ import Model.Factory.Interfaces.IReservaFactory;
 public class ReservaService implements IReservaService{
     private List<Reserva> listaReservas = new ArrayList<>();
     private IReservaFactory reservaFactory = new ReservaFactory();
+    private static ReservaService instancia; // Singleton
+    
+    
+    
+    
+
+    private ReservaService() {}
+
+   
+    public static ReservaService getInstancia() {
+        if (instancia == null) {
+            instancia = new ReservaService();
+        }
+        return instancia;
+    }
     @Override
     public void adicionarReserva(Cliente cliente,Carro carroSelecionado) {
     	Reserva novaReserva = reservaFactory.criarReserva(cliente, carroSelecionado);
